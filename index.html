@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Лабораторна робота №2</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 30px auto; padding: 0 16px; }
+    button { display: block; margin: 6px 0; padding: 8px 12px; cursor: pointer; width: 100%; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>Завдання</h1>
+
+  <button onclick="base1()"> Привітання</button>
+  <button onclick="base2()"> Рік народження</button>
+  <button onclick="base3()"> Повне ім'я </button>
+
+  <button onclick="mid1()"> Глобальна та блочна userName</button>
+  <button onclick="mid2()"> confirm з ім'ям та віком</button>
+  <button onclick="mid3()"> Парне / непарне</button>
+
+  <button onclick="high1()"> calculate() — блочна область видимості</button>
+  <button onclick="high2()"> secretNumber</button>
+  <button onclick="high3()"> Ім'я та сума двох чисел</button>
+
+<script>
+
+// Ім'я: лише літери (укр/лат), пробіл, дефіс, апостроф
+function askName(message) {
+  const nameRegex = /^[A-Za-zА-Яа-яІіЇїЄєҐґ'’\- ]+$/;
+  while (true) {
+    const value = prompt(message);
+    if (value === null) return null;           // натиснули Cancel
+    const trimmed = value.trim();
+    if (trimmed !== "" && nameRegex.test(trimmed)) return trimmed;
+    alert("Помилка: введіть ім'я лише літерами (без цифр і символів).");
+  }
+}
+
+// Ціле число в діапазоні [min, max]
+function askInteger(message, min = -Infinity, max = Infinity) {
+  while (true) {
+    const value = prompt(message);
+    if (value === null) return null;
+    const trimmed = value.trim();
+    if (/^-?\d+$/.test(trimmed)) {
+      const num = Number(trimmed);
+      if (num >= min && num <= max) return num;
+    }
+    const range = (min === -Infinity && max === Infinity)
+      ? "" : ` від ${min} до ${max}`;
+    alert(`Помилка: введіть ціле число${range}.`);
+  }
+}
+
+// Будь-яке число (ціле або дробове)
+function askNumber(message) {
+  while (true) {
+    const value = prompt(message);
+    if (value === null) return null;
+    const trimmed = value.trim().replace(",", ".");
+    if (/^-?\d+(\.\d+)?$/.test(trimmed)) return Number(trimmed);
+    alert("Помилка: введіть число (наприклад 5 або 3.14).");
+  }
+}
+
+function cancelled() {
+  alert("Введення скасовано.");
+}
+
+// 1) Привітання через шаблонний рядок
+function base1() {
+  const userName = askName("Введіть ваше ім'я:");
+  if (userName === null) return cancelled();
+  alert(`Вітаю, ${userName}!`);
+}
+
+// 2) Рік народження
+function base2() {
+  const age = askInteger("Скільки вам років?", 0, 120);
+  if (age === null) return cancelled();
+  const currentYear = new Date().getFullYear();
+  const birthYear = currentYear - age;
+  alert(`Ви ${birthYear} року народження`);
+}
+
+// 3) Повне ім'я: спочатку через +, потім через шаблонний рядок
+function base3() {
+  const name = askName("Введіть ваше ім'я:");
+  if ( name === null) return cancelled();
+  const surname = askName("Введіть ваше прізвище:");
+  if (surname === null) return cancelled();
+   const patronymic = askName("Введіть ваше по батькові:");
+  if (patronymic === null) return cancelled();
+
+  console.log("Ваще повне ім'я:  " + name + " " + surname + " " + patronymic);   
+  console.log(`Ваще повне ім'я: ${name} ${surname} ${patronymic}`);        
+}
+
+// 4) Глобальна змінна та змінна всередині блоку if
+let userName = "Поліна";   
+
+function mid1() {
+  if (true) {
+    const inputName = askName("Введіть інше ім'я:");
+    if (inputName === null) return cancelled();
+
+    let userName = inputName;   
+    console.log("Всередині if:", userName);
+  }
+  console.log("Поза блоком if:", userName);
+}
+
+// 5) confirm з ім'ям та віком
+function mid2() {
+  const name = askName("Введіть ваше ім'я:");
+  if (name === null) return cancelled();
+  const age = askInteger("Введіть ваш вік:", 0, 120);
+  if (age === null) return cancelled();
+
+  const isConfirmed = confirm(`Вітаю, ${name}! Вам ${age} років. Продовжити?`);
+  if (isConfirmed) {
+    alert("Будьласка!");
+  } else {
+    alert("Бувайте!");
+  }
+}
+
+// 6) Парне / непарне
+function mid3() {
+  const number = askInteger("Введіть ціле число:");
+  if (number === null) return cancelled();
+
+  if (number % 2 === 0) {
+    alert("Число парне");
+  } else {
+    alert("Число не парне");
+  }
+}
+
+// 7) calculate() — блочна область видимості
+function high1() {
+  let result = 10;                       
+  if (true) {
+    let result = 20;                     
+    console.log("результат всередині if:", result);   
+  }
+
+  console.log("результат у функції:", result);   
+}
+
+// 8) secretNumber
+function high2() {
+  const journalNumber = 17;                    
+  const secretNumber = journalNumber % 10;     
+
+  const guess = askInteger("Введіть число від 0 до 9:", 0, 9);
+  if (guess === null) return cancelled();
+
+  if (guess === secretNumber) {
+    alert("Вірно!");
+  } else {
+    alert("Невірно!");
+  }
+}
+
+// 9) Ім'я та сума двох чисел 
+function high3() {
+  const name = askName("Введіть ваше ім'я:");
+  if (name === null) return cancelled();
+  const a = askNumber("Введіть перше число:");
+  if (a === null) return cancelled();
+  const b = askNumber("Введіть друге число:");
+  if (b === null) return cancelled();
+
+  const sum = a + b;
+  console.log("Вітаю, " + name + "! Сумма " + a + " та " + b + " це " + sum);
+}
+</script>
+</body>
+</html>
